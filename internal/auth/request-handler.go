@@ -69,29 +69,6 @@ func (h RequestHandler) Login(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) Logout(c *gin.Context) {
-	var req AuthRequest
-
-	if err := c.BindJSON(&req); err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Meta: dto.MetaResponse{
-				Success: false,
-				Message: err.Error(),
-			},
-			Data: nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, dto.Response{
-		Meta: dto.MetaResponse{
-			Success: true,
-			Message: "",
-		},
-		Data: nil,
-	})
-}
-
 func (h RequestHandler) ShowProfile(c *gin.Context) {
 	authorization := c.Request.Header["Authorization"]
 	if authorization == nil {

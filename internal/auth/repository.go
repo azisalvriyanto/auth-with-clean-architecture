@@ -50,11 +50,6 @@ func (r Repository) Login(user *user.User) (*ProfileItemWithToken, error) {
 	}, err
 }
 
-func (r Repository) Logout(tokenSigned string) (*user.User, error) {
-	var user *user.User
-	return user, nil
-}
-
 func (r Repository) ShowProfile(tokenSigned string) (*user.User, error) {
 	token, err := jwt.Parse(tokenSigned, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
