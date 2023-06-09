@@ -3,6 +3,7 @@ This mini project describes about authentication, but I will implement clean arc
 * [Setup](#scenario)
 * [How to Run](#how-to-run)
 * [Postman Collection](#postman-collection)
+* [Docker Registry](#docker-registry)
 * [Tech Spec](#tech-spec)
 
 ## Setup
@@ -50,6 +51,12 @@ go run cmd/main.go
 You can get postman collection [here](https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK).
 Alternatively, open the following url in your browser
 [https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK](https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK)
+
+## Docker Registry
+Do the command to pull docker registry:
+```bash
+docker pull azisalvriyanto/auth-and-clean-architecture:1.0
+```
 
 ## Tech Spec
 ### Feature Description
