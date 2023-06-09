@@ -74,7 +74,7 @@ func main() {
 	authRs.PUT("/users/:ID", userHandler.Update)
 	authRs.DELETE("/users/:ID", userHandler.Destroy)
 
-	err = r.Run(":1337")
+	err = r.Run(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
