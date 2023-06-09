@@ -7,12 +7,20 @@ import (
 )
 
 type Controller struct {
-	useCase *UseCase
+	UC UseCaseInterface
 }
 
-func NewController(useCase *UseCase) *Controller {
+type ControllerInterface interface {
+	ShowAll() (*[]CustomerItem, error)
+	Create(body *CreateRequest) (*CustomerItemResponse, error)
+	Show(ID string) (*CustomerItem, error)
+	Update(ID string, body Customer) (*CustomerItemResponse, error)
+	Destroy(ID string) (*CustomerItemResponse, error)
+}
+
+func NewController(uc UseCaseInterface) *Controller {
 	return &Controller{
-		useCase: useCase,
+		UC: uc,
 	}
 }
 
@@ -30,7 +38,7 @@ type CustomerItemResponse struct {
 }
 
 func (c Controller) ShowAll() (*[]CustomerItem, error) {
-	customers, err := c.useCase.ShowAll()
+	customers, err := c.UC.ShowAll()
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +66,7 @@ func (c Controller) Create(body *CreateRequest) (*CustomerItemResponse, error) {
 		Email:     body.Email,
 		Avatar:    body.Avatar,
 	}
-	err := c.useCase.Create(&customer)
+	err := c.UC.Create(&customer)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +85,7 @@ func (c Controller) Create(body *CreateRequest) (*CustomerItemResponse, error) {
 	return res, nil
 }
 func (c Controller) Show(ID string) (*CustomerItem, error) {
-	customer, err := c.useCase.Show(ID)
+	customer, err := c.UC.Show(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +106,7 @@ func (c Controller) Show(ID string) (*CustomerItem, error) {
 }
 
 func (c Controller) Update(ID string, body Customer) (*CustomerItemResponse, error) {
-	customers, err := c.useCase.Update(ID, body)
+	customers, err := c.UC.Update(ID, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +126,7 @@ func (c Controller) Update(ID string, body Customer) (*CustomerItemResponse, err
 }
 
 func (c Controller) Destroy(ID string) (*CustomerItemResponse, error) {
-	customer, err := c.useCase.Destroy(ID)
+	customer, err := c.UC.Destroy(ID)
 	if err != nil {
 		return nil, err
 	}

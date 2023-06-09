@@ -55,25 +55,28 @@ func main() {
 
 	authHandler := auth.DefaultRequestHandler(db)
 	userHandler := user.DefaultRequestHandler(db)
-	customerHandler := customer.DefaultRequestHandler(db)
 
 	r.POST("/auth/login", authHandler.Login)
 	r.POST("/auth/register", userHandler.Create)
 
-	authRs := r.Group("/").Use(middleware.AuthMiddleware)
-	authRs.GET("/auth/profile", authHandler.ShowProfile)
+	authR := r.Group("/").Use(middleware.AuthMiddleware)
+	authR.GET("/auth/profile", authHandler.ShowProfile)
 
-	authRs.GET("/customers", customerHandler.ShowAll)
-	authRs.POST("/customers", customerHandler.Create)
-	authRs.GET("/customers/:ID", customerHandler.Show)
-	authRs.PUT("/customers/:ID", customerHandler.Update)
-	authRs.DELETE("/customers/:ID", customerHandler.Destroy)
+	customerRepository := customer.NewRepository(db)
+	customerUseCase := customer.NewUseCase(customerRepository)
+	customerController := customer.NewController(customerUseCase)
+	customerHandler := customer.NewRequestHandler(customerController)
+	authR.GET("/customers", customerHandler.ShowAll)
+	authR.POST("/customers", customerHandler.Create)
+	authR.GET("/customers/:ID", customerHandler.Show)
+	authR.PUT("/customers/:ID", customerHandler.Update)
+	authR.DELETE("/customers/:ID", customerHandler.Destroy)
 
-	authRs.GET("/users", userHandler.ShowAll)
-	authRs.POST("/users", userHandler.Create)
-	authRs.GET("/users/:ID", userHandler.Show)
-	authRs.PUT("/users/:ID", userHandler.Update)
-	authRs.DELETE("/users/:ID", userHandler.Destroy)
+	authR.GET("/users", userHandler.ShowAll)
+	authR.POST("/users", userHandler.Create)
+	authR.GET("/users/:ID", userHandler.Show)
+	authR.PUT("/users/:ID", userHandler.Update)
+	authR.DELETE("/users/:ID", userHandler.Destroy)
 
 	err = r.Run(":8080")
 	if err != nil {

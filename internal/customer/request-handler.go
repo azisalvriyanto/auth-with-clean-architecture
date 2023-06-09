@@ -1,31 +1,28 @@
 package customer
 
 import (
-	"auth-with-clean-architecture/dto"
+	"auth-with-clean-architecture-dev/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type RequestHandler struct {
-	ctrl *Controller
+	C ControllerInterface
 }
 
-func NewRequestHandler(ctrl *Controller) *RequestHandler {
+type RequestHandlerInterface interface {
+	ShowAll(c *gin.Context)
+	Create(c *gin.Context)
+	Show(c *gin.Context)
+	Update(c *gin.Context)
+	Destroy(c *gin.Context)
+}
+
+func NewRequestHandler(c ControllerInterface) RequestHandlerInterface {
 	return &RequestHandler{
-		ctrl: ctrl,
+		C: c,
 	}
-}
-
-func DefaultRequestHandler(db *gorm.DB) *RequestHandler {
-	return NewRequestHandler(
-		NewController(
-			NewUseCase(
-				NewRepository(db),
-			),
-		),
-	)
 }
 
 type CreateRequest struct {
@@ -35,8 +32,8 @@ type CreateRequest struct {
 	Avatar    string `json:"avatar" binding:"required"`
 }
 
-func (h RequestHandler) ShowAll(c *gin.Context) {
-	res, err := h.ctrl.ShowAll()
+func (rh RequestHandler) ShowAll(c *gin.Context) {
+	res, err := rh.C.ShowAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
@@ -57,7 +54,7 @@ func (h RequestHandler) ShowAll(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) Create(c *gin.Context) {
+func (rh RequestHandler) Create(c *gin.Context) {
 	var req CreateRequest
 
 	if err := c.BindJSON(&req); err != nil {
@@ -71,7 +68,7 @@ func (h RequestHandler) Create(c *gin.Context) {
 		return
 	}
 
-	res, err := h.ctrl.Create(&req)
+	res, err := rh.C.Create(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
@@ -92,9 +89,9 @@ func (h RequestHandler) Create(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) Show(c *gin.Context) {
+func (rh RequestHandler) Show(c *gin.Context) {
 	ID := c.Param("ID")
-	res, err := h.ctrl.Show(ID)
+	res, err := rh.C.Show(ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
@@ -115,7 +112,7 @@ func (h RequestHandler) Show(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) Update(c *gin.Context) {
+func (rh RequestHandler) Update(c *gin.Context) {
 	customer := Customer{}
 	ID := c.Param("ID")
 	if err := c.ShouldBindJSON(&customer); err != nil {
@@ -129,7 +126,7 @@ func (h RequestHandler) Update(c *gin.Context) {
 		return
 	}
 
-	res, err := h.ctrl.Update(ID, customer)
+	res, err := rh.C.Update(ID, customer)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
@@ -150,9 +147,9 @@ func (h RequestHandler) Update(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) Destroy(c *gin.Context) {
+func (rh RequestHandler) Destroy(c *gin.Context) {
 	ID := c.Param("ID")
-	res, err := h.ctrl.Destroy(ID)
+	res, err := rh.C.Destroy(ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
