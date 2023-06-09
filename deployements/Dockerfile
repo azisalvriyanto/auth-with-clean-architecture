@@ -13,4 +13,4 @@ RUN go build -o auth-with-clean-architecture ./cmd
 
 EXPOSE 8080
 
-CMD ["./auth-with-clean-architecture-dev"]
+CMD ["./auth-with-clean-architecture"]
