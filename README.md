@@ -69,4 +69,4 @@ This service using onion architecture, there are 5 layers from inner to outer wh
 ### Data Flow Diagram
 There are 5 table that dedicated on this services which are users, customers, roles, permissions and role_permission. For complete explanation of database structure you can follow this ddf.
 
-![data flow diagram](./_assets/database-design.png)
+![data flow diagram](./docs/database-design.png)
