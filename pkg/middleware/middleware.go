@@ -59,7 +59,7 @@ func AuthMiddleware(c *gin.Context) {
 	}
 
 	accessToken := fields[1]
-	payload, err := auth.Controller.VerifyToken(auth.Controller{}, accessToken)
+	payload, err := auth.ControllerInterface.VerifyToken(&auth.Controller{}, accessToken)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{

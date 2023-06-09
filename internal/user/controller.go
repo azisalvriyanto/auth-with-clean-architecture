@@ -7,12 +7,20 @@ import (
 )
 
 type Controller struct {
-	useCase *UseCase
+	UC UseCaseInterface
 }
 
-func NewController(useCase *UseCase) *Controller {
+type ControllerInterface interface {
+	ShowAll() (*[]UserItem, error)
+	Create(body *CreateRequest) (*UserItemResponse, error)
+	Show(ID string) (*UserItem, error)
+	Update(ID string, body User) (*UserItemResponse, error)
+	Destroy(ID string) (*UserItemResponse, error)
+}
+
+func NewController(uc UseCaseInterface) ControllerInterface {
 	return &Controller{
-		useCase: useCase,
+		UC: uc,
 	}
 }
 
@@ -28,8 +36,8 @@ type UserItemResponse struct {
 	Data    *UserItem `json:"data"`
 }
 
-func (c Controller) ShowAll() (*[]UserItem, error) {
-	users, err := c.useCase.ShowAll()
+func (c *Controller) ShowAll() (*[]UserItem, error) {
+	users, err := c.UC.ShowAll()
 	if err != nil {
 		return nil, err
 	}
@@ -48,14 +56,14 @@ func (c Controller) ShowAll() (*[]UserItem, error) {
 	return res, nil
 }
 
-func (c Controller) Create(body *CreateRequest) (*UserItemResponse, error) {
+func (c *Controller) Create(body *CreateRequest) (*UserItemResponse, error) {
 	user := User{
 		Model:    gorm.Model{},
 		FullName: body.FullName,
 		Username: body.Username,
 		Password: body.Password,
 	}
-	err := c.useCase.Create(&user)
+	err := c.UC.Create(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +80,8 @@ func (c Controller) Create(body *CreateRequest) (*UserItemResponse, error) {
 
 	return res, nil
 }
-func (c Controller) Show(ID string) (*UserItem, error) {
-	user, err := c.useCase.Show(ID)
+func (c *Controller) Show(ID string) (*UserItem, error) {
+	user, err := c.UC.Show(ID)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +100,8 @@ func (c Controller) Show(ID string) (*UserItem, error) {
 	return res, nil
 }
 
-func (c Controller) Update(ID string, body User) (*UserItemResponse, error) {
-	user, err := c.useCase.Update(ID, body)
+func (c *Controller) Update(ID string, body User) (*UserItemResponse, error) {
+	user, err := c.UC.Update(ID, body)
 	if err != nil {
 		return nil, err
 	}
@@ -111,8 +119,8 @@ func (c Controller) Update(ID string, body User) (*UserItemResponse, error) {
 	return res, nil
 }
 
-func (c Controller) Destroy(ID string) (*UserItemResponse, error) {
-	user, err := c.useCase.Destroy(ID)
+func (c *Controller) Destroy(ID string) (*UserItemResponse, error) {
+	user, err := c.UC.Destroy(ID)
 	if err != nil {
 		return nil, err
 	}

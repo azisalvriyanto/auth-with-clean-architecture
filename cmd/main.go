@@ -53,30 +53,44 @@ func main() {
 		})
 	})
 
-	authHandler := auth.DefaultRequestHandler(db)
-	userHandler := user.DefaultRequestHandler(db)
+	// setup auth handler
+	authRepository := auth.NewRepository(db)
+	authUseCase := auth.NewUseCase(authRepository)
+	authController := auth.NewController(authUseCase)
+	authHandler := auth.NewRequestHandler(authController)
 
+	// setup user handler
+	userRepository := user.NewRepository(db)
+	userUseCase := user.NewUseCase(userRepository)
+	userController := user.NewController(userUseCase)
+	userHandler := user.NewRequestHandler(userController)
+
+	//setup customer handler
+	customerRepository := customer.NewRepository(db)
+	customerUseCase := customer.NewUseCase(customerRepository)
+	customerController := customer.NewController(customerUseCase)
+	customerHandler := customer.NewRequestHandler(customerController)
+
+	// auth
 	r.POST("/auth/login", authHandler.Login)
 	r.POST("/auth/register", userHandler.Create)
 
 	authR := r.Group("/").Use(middleware.AuthMiddleware)
 	authR.GET("/auth/profile", authHandler.ShowProfile)
 
-	customerRepository := customer.NewRepository(db)
-	customerUseCase := customer.NewUseCase(customerRepository)
-	customerController := customer.NewController(customerUseCase)
-	customerHandler := customer.NewRequestHandler(customerController)
-	authR.GET("/customers", customerHandler.ShowAll)
-	authR.POST("/customers", customerHandler.Create)
-	authR.GET("/customers/:ID", customerHandler.Show)
-	authR.PUT("/customers/:ID", customerHandler.Update)
-	authR.DELETE("/customers/:ID", customerHandler.Destroy)
-
+	// users
 	authR.GET("/users", userHandler.ShowAll)
 	authR.POST("/users", userHandler.Create)
 	authR.GET("/users/:ID", userHandler.Show)
 	authR.PUT("/users/:ID", userHandler.Update)
 	authR.DELETE("/users/:ID", userHandler.Destroy)
+
+	// customers
+	authR.GET("/customers", customerHandler.ShowAll)
+	authR.POST("/customers", customerHandler.Create)
+	authR.GET("/customers/:ID", customerHandler.Show)
+	authR.PUT("/customers/:ID", customerHandler.Update)
+	authR.DELETE("/customers/:ID", customerHandler.Destroy)
 
 	err = r.Run(":8080")
 	if err != nil {
