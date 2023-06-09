@@ -29,16 +29,16 @@ This mini project describes about authentication, but I will implement clean arc
     DB_PORT=3306
     DB_USERNAME=root
     DB_PASSWORD=
-    DB_DATABASE=api_auth
+    DB_DATABASE=auth_with_clean_architecture
     ```
 1. Set up the jwt key at `.env`, For example:
     ```text
-    JWT_KEY="secret-key"
+    JWT_KEY="awesome-secret-key"
     ```
 
 1. Do the command to import database configuration:
     ```bash
-    $ mysql -u root -p < ./_assets/auth_with_clean_architecture_backup.sql
+    $ mysql -u root -p < ./docs/auth_with_clean_architecture_backup.sql
     ```
 
 ## How to Run
@@ -49,8 +49,6 @@ go run cmd/main.go
 
 ## Postman Collection
 You can get postman collection [here](https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK).
-Alternatively, open the following url in your browser
-[https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK](https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK)
 
 ## Docker Registry
 Do the command to pull docker registry:

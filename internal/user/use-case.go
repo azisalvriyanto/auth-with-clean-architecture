@@ -1,31 +1,38 @@
 package user
 
 type UseCase struct {
-	repository *Repository
+	R RepositoryInterface
+}
+type UseCaseInterface interface {
+	ShowAll() ([]User, error)
+	Create(user *User) error
+	Show(ID string) (*User, error)
+	Update(ID string, user User) (*User, error)
+	Destroy(ID string) (*User, error)
 }
 
-func NewUseCase(r *Repository) *UseCase {
+func NewUseCase(r RepositoryInterface) UseCaseInterface {
 	return &UseCase{
-		repository: r,
+		R: r,
 	}
 }
 
-func (u UseCase) ShowAll() ([]User, error) {
-	return u.repository.ShowAll()
+func (u *UseCase) ShowAll() ([]User, error) {
+	return u.R.ShowAll()
 }
 
-func (u UseCase) Create(user *User) error {
-	return u.repository.Create(user)
+func (u *UseCase) Create(user *User) error {
+	return u.R.Create(user)
 }
 
-func (u UseCase) Show(ID string) (*User, error) {
-	return u.repository.Show(ID)
+func (u *UseCase) Show(ID string) (*User, error) {
+	return u.R.Show(ID)
 }
 
-func (u UseCase) Update(ID string, user User) (*User, error) {
-	return u.repository.Update(ID, user)
+func (u *UseCase) Update(ID string, user User) (*User, error) {
+	return u.R.Update(ID, user)
 }
 
-func (u UseCase) Destroy(ID string) (*User, error) {
-	return u.repository.Destroy(ID)
+func (u *UseCase) Destroy(ID string) (*User, error) {
+	return u.R.Destroy(ID)
 }
