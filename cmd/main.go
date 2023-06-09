@@ -19,10 +19,11 @@ import (
 )
 
 func initDB() (*gorm.DB, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file")
+	// }
+	godotenv.Load(".env")
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -73,7 +74,7 @@ func main() {
 	authRs.PUT("/users/:ID", userHandler.Update)
 	authRs.DELETE("/users/:ID", userHandler.Destroy)
 
-	err = r.Run(":1337")
+	err = r.Run(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
