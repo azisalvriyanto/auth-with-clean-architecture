@@ -58,10 +58,6 @@ func (c Controller) Login(body *AuthRequest) (*ProfileItemResponse, error) {
 	return res, nil
 }
 
-func (c Controller) Logout(tokenSigned string) (*ProfileItem, error) {
-	return nil, nil
-}
-
 func (c Controller) ShowProfile(tokenSigned string) (*ProfileItem, error) {
 	user, err := c.useCase.ShowProfile(tokenSigned)
 	if err != nil {

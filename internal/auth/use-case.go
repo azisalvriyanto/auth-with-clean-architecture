@@ -30,10 +30,6 @@ func (u UseCase) Login(payload *Payload) (*ProfileItemWithToken, error) {
 	return u.repository.Login(user)
 }
 
-func (u UseCase) Logout(tokenSigned string) (*user.User, error) {
-	return u.repository.Logout(tokenSigned)
-}
-
 func (u UseCase) ShowProfile(tokenSigned string) (*user.User, error) {
 	return u.repository.ShowProfile(tokenSigned)
 }

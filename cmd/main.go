@@ -53,27 +53,28 @@ func main() {
 	})
 
 	authHandler := auth.DefaultRequestHandler(db)
+	userHandler := user.DefaultRequestHandler(db)
+	customerHandler := customer.DefaultRequestHandler(db)
+
 	r.POST("/auth/login", authHandler.Login)
-	r.GET("/auth/logout", authHandler.Logout)
+	r.POST("/auth/register", userHandler.Create)
 
 	authRs := r.Group("/").Use(middleware.AuthMiddleware)
 	authRs.GET("/auth/profile", authHandler.ShowProfile)
 
-	customerHandler := customer.DefaultRequestHandler(db)
 	authRs.GET("/customers", customerHandler.ShowAll)
 	authRs.POST("/customers", customerHandler.Create)
 	authRs.GET("/customers/:ID", customerHandler.Show)
 	authRs.PUT("/customers/:ID", customerHandler.Update)
 	authRs.DELETE("/customers/:ID", customerHandler.Destroy)
 
-	userHandler := user.DefaultRequestHandler(db)
 	authRs.GET("/users", userHandler.ShowAll)
 	authRs.POST("/users", userHandler.Create)
 	authRs.GET("/users/:ID", userHandler.Show)
 	authRs.PUT("/users/:ID", userHandler.Update)
 	authRs.DELETE("/users/:ID", userHandler.Destroy)
 
-	err = r.Run(":1337")
+	err = r.Run(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
