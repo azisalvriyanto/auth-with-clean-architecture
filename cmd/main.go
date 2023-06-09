@@ -77,7 +77,6 @@ func main() {
 
 	authR := r.Group("/").Use(middleware.AuthMiddleware)
 	authR.GET("/auth/profile", authHandler.ShowProfile)
-
 	// users
 	authR.GET("/users", userHandler.ShowAll)
 	authR.POST("/users", userHandler.Create)
