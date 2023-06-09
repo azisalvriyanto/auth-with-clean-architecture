@@ -19,10 +19,11 @@ import (
 )
 
 func initDB() (*gorm.DB, error) {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file")
+	// }
+	godotenv.Load(".env")
 
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
