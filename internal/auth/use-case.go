@@ -7,17 +7,21 @@ import (
 )
 
 type UseCase struct {
-	repository *Repository
+	R RepositoryInterface
+}
+type UseCaseInterface interface {
+	Login(payload *Payload) (*ProfileItemWithToken, error)
+	ShowProfile(tokenSigned string) (*user.User, error)
 }
 
-func NewUseCase(r *Repository) *UseCase {
+func NewUseCase(r RepositoryInterface) UseCaseInterface {
 	return &UseCase{
-		repository: r,
+		R: r,
 	}
 }
 
-func (u UseCase) Login(payload *Payload) (*ProfileItemWithToken, error) {
-	user, _ := u.repository.FindByUsername(payload.Username)
+func (u *UseCase) Login(payload *Payload) (*ProfileItemWithToken, error) {
+	user, _ := u.R.FindByUsername(payload.Username)
 	if user.Username == "" {
 		return nil, errors.New("user not found")
 	}
@@ -27,9 +31,9 @@ func (u UseCase) Login(payload *Payload) (*ProfileItemWithToken, error) {
 		return nil, errors.New("password is incorrect")
 	}
 
-	return u.repository.Login(user)
+	return u.R.Login(user)
 }
 
-func (u UseCase) ShowProfile(tokenSigned string) (*user.User, error) {
-	return u.repository.ShowProfile(tokenSigned)
+func (u *UseCase) ShowProfile(tokenSigned string) (*user.User, error) {
+	return u.R.ShowProfile(tokenSigned)
 }

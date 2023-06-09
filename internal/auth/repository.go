@@ -10,21 +10,28 @@ import (
 )
 
 type Repository struct {
-	db *gorm.DB
+	DB *gorm.DB
+}
+type RepositoryInterface interface {
+	FindByUsername(username string) (*user.User, error)
+	Login(user *user.User) (*ProfileItemWithToken, error)
+	ShowProfile(tokenSigned string) (*user.User, error)
 }
 
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{db: db}
+func NewRepository(db *gorm.DB) RepositoryInterface {
+	return &Repository{
+		DB: db,
+	}
 }
 
-func (r Repository) FindByUsername(username string) (*user.User, error) {
+func (r *Repository) FindByUsername(username string) (*user.User, error) {
 	var user *user.User
-	res := r.db.Where("username = ?", username).First(&user).Error
+	res := r.DB.Where("username = ?", username).First(&user).Error
 
 	return user, res
 }
 
-func (r Repository) Login(user *user.User) (*ProfileItemWithToken, error) {
+func (r *Repository) Login(user *user.User) (*ProfileItemWithToken, error) {
 	expTime := time.Now().Add(time.Minute * 3600)
 	claims := &JWTClaim{
 		Username: user.Username,
@@ -50,7 +57,7 @@ func (r Repository) Login(user *user.User) (*ProfileItemWithToken, error) {
 	}, err
 }
 
-func (r Repository) ShowProfile(tokenSigned string) (*user.User, error) {
+func (r *Repository) ShowProfile(tokenSigned string) (*user.User, error) {
 	token, err := jwt.Parse(tokenSigned, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")

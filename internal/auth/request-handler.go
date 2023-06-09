@@ -6,27 +6,21 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type RequestHandler struct {
-	ctrl *Controller
+	C ControllerInterface
 }
 
-func NewRequestHandler(ctrl *Controller) *RequestHandler {
+type RequestHandlerInterface interface {
+	Login(c *gin.Context)
+	ShowProfile(c *gin.Context)
+}
+
+func NewRequestHandler(c ControllerInterface) RequestHandlerInterface {
 	return &RequestHandler{
-		ctrl: ctrl,
+		C: c,
 	}
-}
-
-func DefaultRequestHandler(db *gorm.DB) *RequestHandler {
-	return NewRequestHandler(
-		NewController(
-			NewUseCase(
-				NewRepository(db),
-			),
-		),
-	)
 }
 
 type AuthRequest struct {
@@ -34,7 +28,7 @@ type AuthRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (h RequestHandler) Login(c *gin.Context) {
+func (rh *RequestHandler) Login(c *gin.Context) {
 	var req AuthRequest
 
 	if err := c.BindJSON(&req); err != nil {
@@ -48,7 +42,7 @@ func (h RequestHandler) Login(c *gin.Context) {
 		return
 	}
 
-	res, err := h.ctrl.Login(&req)
+	res, err := rh.C.Login(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
@@ -69,7 +63,7 @@ func (h RequestHandler) Login(c *gin.Context) {
 	})
 }
 
-func (h RequestHandler) ShowProfile(c *gin.Context) {
+func (rh *RequestHandler) ShowProfile(c *gin.Context) {
 	authorization := c.Request.Header["Authorization"]
 	if authorization == nil {
 		c.JSON(http.StatusUnauthorized, dto.Response{
@@ -83,7 +77,7 @@ func (h RequestHandler) ShowProfile(c *gin.Context) {
 	}
 
 	tokenSigned := strings.Split(authorization[0], " ")[1]
-	res, err := h.ctrl.ShowProfile(tokenSigned)
+	res, err := rh.C.ShowProfile(tokenSigned)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{

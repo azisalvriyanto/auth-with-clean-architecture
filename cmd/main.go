@@ -53,7 +53,11 @@ func main() {
 		})
 	})
 
-	authHandler := auth.DefaultRequestHandler(db)
+	// setup auth handler
+	authRepository := auth.NewRepository(db)
+	authUseCase := auth.NewUseCase(authRepository)
+	authController := auth.NewController(authUseCase)
+	authHandler := auth.NewRequestHandler(authController)
 
 	// setup user handler
 	userRepository := user.NewRepository(db)
@@ -73,7 +77,6 @@ func main() {
 
 	authR := r.Group("/").Use(middleware.AuthMiddleware)
 	authR.GET("/auth/profile", authHandler.ShowProfile)
-
 	// users
 	authR.GET("/users", userHandler.ShowAll)
 	authR.POST("/users", userHandler.Create)

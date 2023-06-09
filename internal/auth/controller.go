@@ -8,12 +8,18 @@ import (
 )
 
 type Controller struct {
-	useCase *UseCase
+	UC UseCaseInterface
 }
 
-func NewController(useCase *UseCase) *Controller {
+type ControllerInterface interface {
+	Login(body *AuthRequest) (*ProfileItemResponse, error)
+	ShowProfile(tokenSigned string) (*ProfileItem, error)
+	VerifyToken(tokenSigned string) (*JWTClaim, error)
+}
+
+func NewController(uc UseCaseInterface) ControllerInterface {
 	return &Controller{
-		useCase: useCase,
+		UC: uc,
 	}
 }
 
@@ -33,12 +39,12 @@ type ProfileItemResponse struct {
 	Data    *ProfileItemWithToken `json:"data"`
 }
 
-func (c Controller) Login(body *AuthRequest) (*ProfileItemResponse, error) {
+func (c *Controller) Login(body *AuthRequest) (*ProfileItemResponse, error) {
 	payload := Payload{
 		Username: body.Username,
 		Password: body.Password,
 	}
-	user, err := c.useCase.Login(&payload)
+	user, err := c.UC.Login(&payload)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +64,8 @@ func (c Controller) Login(body *AuthRequest) (*ProfileItemResponse, error) {
 	return res, nil
 }
 
-func (c Controller) ShowProfile(tokenSigned string) (*ProfileItem, error) {
-	user, err := c.useCase.ShowProfile(tokenSigned)
+func (c *Controller) ShowProfile(tokenSigned string) (*ProfileItem, error) {
+	user, err := c.UC.ShowProfile(tokenSigned)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +81,7 @@ func (c Controller) ShowProfile(tokenSigned string) (*ProfileItem, error) {
 	}, nil
 }
 
-func (c Controller) VerifyToken(tokenSigned string) (*JWTClaim, error) {
+func (c *Controller) VerifyToken(tokenSigned string) (*JWTClaim, error) {
 	token, err := jwt.Parse(tokenSigned, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method")
