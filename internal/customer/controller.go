@@ -18,7 +18,7 @@ type ControllerInterface interface {
 	Destroy(ID string) (*CustomerItemResponse, error)
 }
 
-func NewController(uc UseCaseInterface) *Controller {
+func NewController(uc UseCaseInterface) ControllerInterface {
 	return &Controller{
 		UC: uc,
 	}
