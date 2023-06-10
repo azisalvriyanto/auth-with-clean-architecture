@@ -14,7 +14,7 @@ services:
             - awca
     awca-go:
         container_name: awca-go
-        image: awca:1.0
+        image: awca:2.0
         # restart: always
         build:
             context: ..
