@@ -1,7 +1,7 @@
 package customer
 
 import (
-	"auth-with-clean-architecture-dev/dto"
+	"auth-with-clean-architecture/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
