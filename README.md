@@ -53,7 +53,7 @@ You can get postman collection [here](https://api.postman.com/collections/693726
 ## Docker Registry
 Do the command to pull docker registry:
 ```bash
-docker pull azisalvriyanto/auth-and-clean-architecture:1.0
+docker pull azisalvriyanto/auth-and-clean-architecture:2.0
 ```
 
 ## Tech Spec
