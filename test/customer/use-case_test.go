@@ -130,3 +130,71 @@ func TestUseCase_Create(t *testing.T) {
 		})
 	}
 }
+
+func TestUseCase_Show(t *testing.T) {
+	type fields struct {
+		R customer.RepositoryInterface
+	}
+	type args struct {
+		ID string
+	}
+	successCase := customer.Customer{
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "ychag@example.com",
+		Avatar:    "",
+	}
+	nilRequest := customer.Customer{}
+	errorCase := errors.New("some error")
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Show("1").Return(&successCase, nil).Once()
+	mockRepository.EXPECT().Show("").Return(&nilRequest, errorCase).Once()
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *customer.Customer
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "1",
+			},
+			want:    &successCase,
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "",
+			},
+			want:    &nilRequest,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &customer.UseCase{
+				R: tt.fields.R,
+			}
+			got, err := u.Show(tt.args.ID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Show() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UseCase.Show() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
