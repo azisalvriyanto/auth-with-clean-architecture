@@ -144,12 +144,12 @@ func TestUseCase_Show(t *testing.T) {
 		Email:     "ychag@example.com",
 		Avatar:    "",
 	}
-	nilRequest := customer.Customer{}
+	nilData := customer.Customer{}
 	errorCase := errors.New("some error")
 
 	mockRepository := mocks.NewRepositoryInterface(t)
 	mockRepository.EXPECT().Show("1").Return(&successCase, nil).Once()
-	mockRepository.EXPECT().Show("").Return(&nilRequest, errorCase).Once()
+	mockRepository.EXPECT().Show("").Return(&nilData, errorCase).Once()
 
 	tests := []struct {
 		name    string
@@ -178,7 +178,7 @@ func TestUseCase_Show(t *testing.T) {
 			args: args{
 				ID: "",
 			},
-			want:    &nilRequest,
+			want:    &nilData,
 			wantErr: true,
 		},
 	}
