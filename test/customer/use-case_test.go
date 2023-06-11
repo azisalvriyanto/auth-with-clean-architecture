@@ -13,11 +13,11 @@ func TestUseCase_ShowAll(t *testing.T) {
 		R customer.RepositoryInterface
 	}
 
-	customers := []customer.Customer{}
+	successCase := []customer.Customer{}
 	errCase := errors.New("some error")
 
 	for i := 0; i < 5; i++ {
-		customers = append(customers, customer.Customer{
+		successCase = append(successCase, customer.Customer{
 			FirstName: "John",
 			LastName:  "Doe",
 			Email:     "johndoe@example.com",
@@ -26,7 +26,7 @@ func TestUseCase_ShowAll(t *testing.T) {
 	}
 
 	mockRepository := mocks.NewRepositoryInterface(t)
-	mockRepository.EXPECT().ShowAll().Return(customers, nil).Once()
+	mockRepository.EXPECT().ShowAll().Return(successCase, nil).Once()
 	mockRepository.EXPECT().ShowAll().Return(nil, errCase).Once()
 
 	tests := []struct {
@@ -41,7 +41,7 @@ func TestUseCase_ShowAll(t *testing.T) {
 			fields: fields{
 				R: mockRepository,
 			},
-			want:    customers,
+			want:    successCase,
 			wantErr: false,
 		},
 		{
@@ -65,6 +65,67 @@ func TestUseCase_ShowAll(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UseCase.ShowAll() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUseCase_Create(t *testing.T) {
+	type fields struct {
+		R customer.RepositoryInterface
+	}
+	type args struct {
+		customer *customer.Customer
+	}
+
+	successCase := customer.Customer{
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "ychag@example.com",
+		Avatar:    "",
+	}
+	nilRequest := customer.Customer{}
+	errorCase := errors.New("some error")
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Create(&successCase).Return(nil).Once()
+	mockRepository.EXPECT().Create(&nilRequest).Return(errorCase).Once()
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				customer: &successCase,
+			},
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				customer: &nilRequest,
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &customer.UseCase{
+				R: tt.fields.R,
+			}
+			if err := u.Create(tt.args.customer); (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Create() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
