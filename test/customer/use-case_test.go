@@ -198,3 +198,108 @@ func TestUseCase_Show(t *testing.T) {
 		})
 	}
 }
+
+func TestUseCase_Update(t *testing.T) {
+	type fields struct {
+		R customer.RepositoryInterface
+	}
+	type args struct {
+		ID       string
+		customer customer.Customer
+	}
+
+	successCase := customer.Customer{
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "ychag@example.com",
+		Avatar:    "",
+	}
+	nilRequest := customer.Customer{}
+	errorCase := errors.New("some error")
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Update("1", successCase).Return(&successCase, nil).Once()
+	mockRepository.EXPECT().Update("1", nilRequest).Return(&nilRequest, errorCase).Once()
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *customer.Customer
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID:       "1",
+				customer: successCase,
+			},
+			want:    &successCase,
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID:       "1",
+				customer: nilRequest,
+			},
+			want:    &nilRequest,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &customer.UseCase{
+				R: tt.fields.R,
+			}
+			got, err := u.Update(tt.args.ID, tt.args.customer)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Update() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UseCase.Update() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUseCase_Destroy(t *testing.T) {
+	type fields struct {
+		R customer.RepositoryInterface
+	}
+	type args struct {
+		ID string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *customer.Customer
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &customer.UseCase{
+				R: tt.fields.R,
+			}
+			got, err := u.Destroy(tt.args.ID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Destroy() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UseCase.Destroy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
