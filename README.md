@@ -55,6 +55,8 @@ Do the command to pull docker registry:
 ```bash
 docker pull azisalvriyanto/auth-and-clean-architecture:2.0
 ```
+Alternatively, open the following url in your browser:
+[https://hub.docker.com/repository/docker/azisalvriyanto/auth-and-clean-architecture](https://hub.docker.com/repository/docker/azisalvriyanto/auth-and-clean-architecture)
 
 ## Tech Spec
 ### Feature Description
