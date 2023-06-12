@@ -138,6 +138,7 @@ func TestUseCase_Show(t *testing.T) {
 	type args struct {
 		ID string
 	}
+
 	successCase := customer.Customer{
 		FirstName: "John",
 		LastName:  "Doe",
@@ -278,6 +279,20 @@ func TestUseCase_Destroy(t *testing.T) {
 	type args struct {
 		ID string
 	}
+
+	successCase := customer.Customer{
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "ychag@example.com",
+		Avatar:    "",
+	}
+	nilData := customer.Customer{}
+	errorCase := errors.New("some error")
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Destroy("1").Return(&successCase, nil).Once()
+	mockRepository.EXPECT().Destroy("").Return(&nilData, errorCase).Once()
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -286,6 +301,28 @@ func TestUseCase_Destroy(t *testing.T) {
 		wantErr bool
 	}{
 		// TODO: Add test cases.
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "1",
+			},
+			want:    &successCase,
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "",
+			},
+			want:    &nilData,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
