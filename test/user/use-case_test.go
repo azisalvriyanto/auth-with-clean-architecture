@@ -16,7 +16,7 @@ var (
 		Password: "password",
 		RoleID:   1,
 	}
-	// nilData = user.User{}
+	nilData = user.User{}
 )
 
 func TestUseCaseShowAll(t *testing.T) {
@@ -68,6 +68,57 @@ func TestUseCaseShowAll(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UseCase.ShowAll() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUseCaseCreate(t *testing.T) {
+	type fields struct {
+		R user.RepositoryInterface
+	}
+	type args struct {
+		user *user.User
+	}
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Create(&existData).Return(nil).Once()
+	mockRepository.EXPECT().Create(&nilData).Return(errorCase).Once()
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				user: &existData,
+			},
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				user: &nilData,
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &user.UseCase{
+				R: tt.fields.R,
+			}
+			if err := u.Create(tt.args.user); (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Create() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
