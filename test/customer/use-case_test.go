@@ -8,26 +8,31 @@ import (
 	"testing"
 )
 
-func TestUseCase_ShowAll(t *testing.T) {
+var (
+	errorCase = errors.New("some error")
+	existData = customer.Customer{
+		FirstName: "John",
+		LastName:  "Doe",
+		Email:     "johndoe@example.com",
+		Avatar:    "",
+	}
+	nilData = customer.Customer{}
+)
+
+func TestUseCaseShowAll(t *testing.T) {
 	type fields struct {
 		R customer.RepositoryInterface
 	}
 
 	successCase := []customer.Customer{}
-	errCase := errors.New("some error")
 
 	for i := 0; i < 5; i++ {
-		successCase = append(successCase, customer.Customer{
-			FirstName: "John",
-			LastName:  "Doe",
-			Email:     "johndoe@example.com",
-			Avatar:    "",
-		})
+		successCase = append(successCase, existData)
 	}
 
 	mockRepository := mocks.NewRepositoryInterface(t)
 	mockRepository.EXPECT().ShowAll().Return(successCase, nil).Once()
-	mockRepository.EXPECT().ShowAll().Return(nil, errCase).Once()
+	mockRepository.EXPECT().ShowAll().Return(nil, errorCase).Once()
 
 	tests := []struct {
 		name    string
@@ -35,7 +40,6 @@ func TestUseCase_ShowAll(t *testing.T) {
 		want    []customer.Customer
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "success case",
 			fields: fields{
@@ -70,7 +74,7 @@ func TestUseCase_ShowAll(t *testing.T) {
 	}
 }
 
-func TestUseCase_Create(t *testing.T) {
+func TestUseCaseCreate(t *testing.T) {
 	type fields struct {
 		R customer.RepositoryInterface
 	}
@@ -78,18 +82,9 @@ func TestUseCase_Create(t *testing.T) {
 		customer *customer.Customer
 	}
 
-	successCase := customer.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "ychag@example.com",
-		Avatar:    "",
-	}
-	nilRequest := customer.Customer{}
-	errorCase := errors.New("some error")
-
 	mockRepository := mocks.NewRepositoryInterface(t)
-	mockRepository.EXPECT().Create(&successCase).Return(nil).Once()
-	mockRepository.EXPECT().Create(&nilRequest).Return(errorCase).Once()
+	mockRepository.EXPECT().Create(&existData).Return(nil).Once()
+	mockRepository.EXPECT().Create(&nilData).Return(errorCase).Once()
 
 	tests := []struct {
 		name    string
@@ -97,14 +92,13 @@ func TestUseCase_Create(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "success",
 			fields: fields{
 				R: mockRepository,
 			},
 			args: args{
-				customer: &successCase,
+				customer: &existData,
 			},
 			wantErr: false,
 		},
@@ -114,7 +108,7 @@ func TestUseCase_Create(t *testing.T) {
 				R: mockRepository,
 			},
 			args: args{
-				customer: &nilRequest,
+				customer: &nilData,
 			},
 			wantErr: true,
 		},
@@ -131,7 +125,7 @@ func TestUseCase_Create(t *testing.T) {
 	}
 }
 
-func TestUseCase_Show(t *testing.T) {
+func TestUseCaseShow(t *testing.T) {
 	type fields struct {
 		R customer.RepositoryInterface
 	}
@@ -139,17 +133,8 @@ func TestUseCase_Show(t *testing.T) {
 		ID string
 	}
 
-	successCase := customer.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "ychag@example.com",
-		Avatar:    "",
-	}
-	nilData := customer.Customer{}
-	errorCase := errors.New("some error")
-
 	mockRepository := mocks.NewRepositoryInterface(t)
-	mockRepository.EXPECT().Show("1").Return(&successCase, nil).Once()
+	mockRepository.EXPECT().Show("1").Return(&existData, nil).Once()
 	mockRepository.EXPECT().Show("").Return(&nilData, errorCase).Once()
 
 	tests := []struct {
@@ -159,7 +144,6 @@ func TestUseCase_Show(t *testing.T) {
 		want    *customer.Customer
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "success",
 			fields: fields{
@@ -168,7 +152,7 @@ func TestUseCase_Show(t *testing.T) {
 			args: args{
 				ID: "1",
 			},
-			want:    &successCase,
+			want:    &existData,
 			wantErr: false,
 		},
 		{
@@ -200,7 +184,7 @@ func TestUseCase_Show(t *testing.T) {
 	}
 }
 
-func TestUseCase_Update(t *testing.T) {
+func TestUseCaseUpdate(t *testing.T) {
 	type fields struct {
 		R customer.RepositoryInterface
 	}
@@ -209,18 +193,9 @@ func TestUseCase_Update(t *testing.T) {
 		customer customer.Customer
 	}
 
-	successCase := customer.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "ychag@example.com",
-		Avatar:    "",
-	}
-	nilRequest := customer.Customer{}
-	errorCase := errors.New("some error")
-
 	mockRepository := mocks.NewRepositoryInterface(t)
-	mockRepository.EXPECT().Update("1", successCase).Return(&successCase, nil).Once()
-	mockRepository.EXPECT().Update("1", nilRequest).Return(&nilRequest, errorCase).Once()
+	mockRepository.EXPECT().Update("1", existData).Return(&existData, nil).Once()
+	mockRepository.EXPECT().Update("1", nilData).Return(&nilData, errorCase).Once()
 
 	tests := []struct {
 		name    string
@@ -229,7 +204,6 @@ func TestUseCase_Update(t *testing.T) {
 		want    *customer.Customer
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "success",
 			fields: fields{
@@ -237,9 +211,9 @@ func TestUseCase_Update(t *testing.T) {
 			},
 			args: args{
 				ID:       "1",
-				customer: successCase,
+				customer: existData,
 			},
-			want:    &successCase,
+			want:    &existData,
 			wantErr: false,
 		},
 		{
@@ -249,9 +223,9 @@ func TestUseCase_Update(t *testing.T) {
 			},
 			args: args{
 				ID:       "1",
-				customer: nilRequest,
+				customer: nilData,
 			},
-			want:    &nilRequest,
+			want:    &nilData,
 			wantErr: true,
 		},
 	}
@@ -272,7 +246,7 @@ func TestUseCase_Update(t *testing.T) {
 	}
 }
 
-func TestUseCase_Destroy(t *testing.T) {
+func TestUseCaseDestroy(t *testing.T) {
 	type fields struct {
 		R customer.RepositoryInterface
 	}
@@ -280,17 +254,8 @@ func TestUseCase_Destroy(t *testing.T) {
 		ID string
 	}
 
-	successCase := customer.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "ychag@example.com",
-		Avatar:    "",
-	}
-	nilData := customer.Customer{}
-	errorCase := errors.New("some error")
-
 	mockRepository := mocks.NewRepositoryInterface(t)
-	mockRepository.EXPECT().Destroy("1").Return(&successCase, nil).Once()
+	mockRepository.EXPECT().Destroy("1").Return(&existData, nil).Once()
 	mockRepository.EXPECT().Destroy("").Return(&nilData, errorCase).Once()
 
 	tests := []struct {
@@ -300,7 +265,6 @@ func TestUseCase_Destroy(t *testing.T) {
 		want    *customer.Customer
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "success",
 			fields: fields{
@@ -309,7 +273,7 @@ func TestUseCase_Destroy(t *testing.T) {
 			args: args{
 				ID: "1",
 			},
-			want:    &successCase,
+			want:    &existData,
 			wantErr: false,
 		},
 		{
