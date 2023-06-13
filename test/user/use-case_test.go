@@ -244,3 +244,62 @@ func TestUseCaseUpdate(t *testing.T) {
 		})
 	}
 }
+
+func TestUseCaseDestroy(t *testing.T) {
+	type fields struct {
+		R user.RepositoryInterface
+	}
+	type args struct {
+		ID string
+	}
+
+	mockRepository := mocks.NewRepositoryInterface(t)
+	mockRepository.EXPECT().Destroy("1").Return(&existData, nil).Once()
+	mockRepository.EXPECT().Destroy("").Return(&nilData, errorCase).Once()
+
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *user.User
+		wantErr bool
+	}{
+		{
+			name: "success",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "1",
+			},
+			want:    &existData,
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				R: mockRepository,
+			},
+			args: args{
+				ID: "",
+			},
+			want:    &nilData,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &user.UseCase{
+				R: tt.fields.R,
+			}
+			got, err := u.Destroy(tt.args.ID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UseCase.Destroy() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UseCase.Destroy() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
