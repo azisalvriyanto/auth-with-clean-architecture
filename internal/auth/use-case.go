@@ -2,8 +2,6 @@ package auth
 
 import (
 	"auth-with-clean-architecture/internal/user"
-	"auth-with-clean-architecture/pkg/password"
-	"errors"
 )
 
 type UseCase struct {
@@ -21,17 +19,7 @@ func NewUseCase(r RepositoryInterface) UseCaseInterface {
 }
 
 func (u *UseCase) Login(payload *Payload) (*ProfileItemWithToken, error) {
-	user, _ := u.R.FindByUsername(payload.Username)
-	if user.Username == "" {
-		return nil, errors.New("user not found")
-	}
-
-	match := password.CheckPasswordHash(payload.Password, user.Password)
-	if !match {
-		return nil, errors.New("password is incorrect")
-	}
-
-	return u.R.Login(user)
+	return u.R.Login(payload)
 }
 
 func (u *UseCase) ShowProfile(tokenSigned string) (*user.User, error) {

@@ -78,15 +78,15 @@ func (_c *RepositoryInterface_FindByUsername_Call) RunAndReturn(run func(string)
 }
 
 // Login provides a mock function with given fields: _a0
-func (_m *RepositoryInterface) Login(_a0 *user.User) (*auth.ProfileItemWithToken, error) {
+func (_m *RepositoryInterface) Login(_a0 *auth.Payload) (*auth.ProfileItemWithToken, error) {
 	ret := _m.Called(_a0)
 
 	var r0 *auth.ProfileItemWithToken
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*user.User) (*auth.ProfileItemWithToken, error)); ok {
+	if rf, ok := ret.Get(0).(func(*auth.Payload) (*auth.ProfileItemWithToken, error)); ok {
 		return rf(_a0)
 	}
-	if rf, ok := ret.Get(0).(func(*user.User) *auth.ProfileItemWithToken); ok {
+	if rf, ok := ret.Get(0).(func(*auth.Payload) *auth.ProfileItemWithToken); ok {
 		r0 = rf(_a0)
 	} else {
 		if ret.Get(0) != nil {
@@ -94,7 +94,7 @@ func (_m *RepositoryInterface) Login(_a0 *user.User) (*auth.ProfileItemWithToken
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(*user.User) error); ok {
+	if rf, ok := ret.Get(1).(func(*auth.Payload) error); ok {
 		r1 = rf(_a0)
 	} else {
 		r1 = ret.Error(1)
@@ -109,14 +109,14 @@ type RepositoryInterface_Login_Call struct {
 }
 
 // Login is a helper method to define mock.On call
-//   - _a0 *user.User
+//   - _a0 *auth.Payload
 func (_e *RepositoryInterface_Expecter) Login(_a0 interface{}) *RepositoryInterface_Login_Call {
 	return &RepositoryInterface_Login_Call{Call: _e.mock.On("Login", _a0)}
 }
 
-func (_c *RepositoryInterface_Login_Call) Run(run func(_a0 *user.User)) *RepositoryInterface_Login_Call {
+func (_c *RepositoryInterface_Login_Call) Run(run func(_a0 *auth.Payload)) *RepositoryInterface_Login_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*user.User))
+		run(args[0].(*auth.Payload))
 	})
 	return _c
 }
@@ -126,7 +126,7 @@ func (_c *RepositoryInterface_Login_Call) Return(_a0 *auth.ProfileItemWithToken,
 	return _c
 }
 
-func (_c *RepositoryInterface_Login_Call) RunAndReturn(run func(*user.User) (*auth.ProfileItemWithToken, error)) *RepositoryInterface_Login_Call {
+func (_c *RepositoryInterface_Login_Call) RunAndReturn(run func(*auth.Payload) (*auth.ProfileItemWithToken, error)) *RepositoryInterface_Login_Call {
 	_c.Call.Return(run)
 	return _c
 }
