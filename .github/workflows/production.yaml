@@ -9,22 +9,22 @@ on:
 jobs:
 
   build:
-    name: Build and Testing
+    # name: Build and Testing
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-    - uses: actions/checkout@v3
+      - name: Checkout Code
+      - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.19
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
 
-    - name: Build
-      run: go build -v ./...
+      - name: Build
+        run: go build -v ./...
 
-    - name: Test
-      run: go test -v ./...
+      - name: Test
+        run: go test -v ./...
 
   # docker:
   #   name: Publish to Docker Hub
