@@ -46,7 +46,7 @@ jobs:
           context: .
           file: ./deployments/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ secrets.TAG_VERSION }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
 
   deploy:
     name: Deploy to VPS
@@ -66,9 +66,9 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_PATH }}
             git pull origin main
-            export PORT="${{ secrets.PORT }}"
+            export PORT="${{ vars.PORT }}"
             export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
-            export TAG_VERSION="${{ secrets.TAG_VERSION }}"
+            export TAG_VERSION="${{ vars.TAG_VERSION }}"
             export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
             export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
             export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
@@ -76,5 +76,5 @@ jobs:
             export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
             export JWT_KEY="${{ secrets.JWT_SECRET_KEY }}"
             docker-compose -f ./deployments/docker-compose.yaml down
-            docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ secrets.TAG_VERSION }} -f ./deployments/Dockerfile .
+            docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }} -f ./deployments/Dockerfile .
             docker-compose -f ./deployments/docker-compose.yaml up --build -d
