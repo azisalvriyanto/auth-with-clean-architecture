@@ -70,7 +70,6 @@ jobs:
 
       - name: Set up MySQL
         run: |
-        sleep 10
         mysql -u ${{ secrets.MYSQL_USERNAME }} -p"${{ env.MYSQL_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ env.MYSQL_DATABASE }}"
 
       - name: Deploy to VPS
