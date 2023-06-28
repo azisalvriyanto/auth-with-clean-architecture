@@ -80,16 +80,16 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }}'
-          export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
-          export TAG_VERSION="${TAG_VERSION}"
-          export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
-          export MYSQL_PORT="${{ secrets.MYSQL_PORT }}"
-          export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-          export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
-          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
-          export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-          export JWT_KEY="${{ secrets.JWT_KEY }}"
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml down || true'
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:$TAG_VERSION -f ./deployments/Dockerfile . || true'
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml up --build -d'
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }}'
+            export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
+            export TAG_VERSION="${TAG_VERSION}"
+            export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
+            export MYSQL_PORT="${{ secrets.MYSQL_PORT }}"
+            export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+            export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
+            export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+            export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
+            export JWT_KEY="${{ secrets.JWT_KEY }}"
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml down || true'
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:$TAG_VERSION -f ./deployments/Dockerfile . || true'
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml up --build -d'
