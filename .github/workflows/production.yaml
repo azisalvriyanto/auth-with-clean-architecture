@@ -34,9 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build ]
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -56,9 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ docker ]
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
       - name: Set up Docker Compose
         run: |
           sudo apt-get update
@@ -66,15 +60,13 @@ jobs:
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.3
-        env:
-          TAG_VERSION: ${{ steps.extract_version.outputs.VERSION }}
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }}'
+            cd ${{ secrets.PROJECT_PATH }}
             export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
             export TAG_VERSION="${{ env.TAG_VERSION }}"
             export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
@@ -84,6 +76,6 @@ jobs:
             export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
             export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
             export JWT_KEY="${{ secrets.JWT_KEY }}"
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml down'
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }} -f ./deployments/Dockerfile .'
-            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml up --build -d'
+            docker-compose -f ./deployments/docker-compose.yaml down
+            docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }} -f ./deployments/Dockerfile .
+            docker-compose -f ./deployments/docker-compose.yaml up --build -d
