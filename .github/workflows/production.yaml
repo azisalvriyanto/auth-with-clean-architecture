@@ -68,10 +68,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up MySQL
-        run: |
-        mysql -u ${{ secrets.MYSQL_USERNAME }} -p"${{ env.MYSQL_PASSWORD }}" -e "CREATE DATABASE IF NOT EXISTS ${{ env.MYSQL_DATABASE }}"
-
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.4
         with:
