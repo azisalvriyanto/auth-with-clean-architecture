@@ -63,8 +63,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          target: ${{ secrets.PROJECT_PATH }}
           script: |
-            cd ${{ secrets.PROJECT_PATH }}
             git pull origin main
             export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
             export TAG_VERSION="${{ vars.TAG_VERSION }}"
