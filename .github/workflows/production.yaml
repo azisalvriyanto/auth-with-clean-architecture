@@ -44,46 +44,46 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./deployments/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }}
 
-  # deploy:
-  #   name: Deploy to VPS
-  #   runs-on: ubuntu-latest
-  #   needs: [ docker ]
-  #   steps:
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v2
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs: [ docker ]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-  #     - name: Set up Docker Compose
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y docker-compose
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-  #     - name: Deploy to VPS
-  #       uses: appleboy/ssh-action@v0.1.3
-  #       env:
-  #         TAG_VERSION: ${{ steps.extract_version.outputs.VERSION }}
-  #       with:
-  #         host: ${{ secrets.SSH_HOST }}
-  #         port: ${{ secrets.SSH_PORT }}
-  #         username: ${{ secrets.SSH_USERNAME }}
-  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         script: |
-  #           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }}'
-  #           export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
-  #           export TAG_VERSION="${{ env.TAG_VERSION }}"
-  #           export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
-  #           export MYSQL_PORT="${{ secrets.MYSQL_PORT }}"
-  #           export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-  #           export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
-  #           export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
-  #           export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-  #           export JWT_KEY="${{ secrets.JWT_KEY }}"
-  #           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml down || true'
-  #           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }} -f ./deployments/Dockerfile . || true'
-  #           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml up --build -d'
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.3
+        env:
+          TAG_VERSION: ${{ steps.extract_version.outputs.VERSION }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }}'
+            export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
+            export TAG_VERSION="${{ env.TAG_VERSION }}"
+            export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
+            export MYSQL_PORT="${{ secrets.MYSQL_PORT }}"
+            export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+            export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
+            export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+            export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
+            export JWT_KEY="${{ secrets.JWT_KEY }}"
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml down'
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }} -f ./deployments/Dockerfile .'
+            ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'docker-compose -f ./deployments/docker-compose.yaml up --build -d'
