@@ -78,7 +78,7 @@ jobs:
             export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
             export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
             export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-            export JWT_KEY="${{ secrets.JWT_KEY }}"
+            export JWT_KEY="${{ secrets.JWT_SECRET_KEY }}"
             docker-compose -f ./deployments/docker-compose.yaml down
             docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ env.TAG_VERSION }} -f ./deployments/Dockerfile .
             docker-compose -f ./deployments/docker-compose.yaml up --build -d
