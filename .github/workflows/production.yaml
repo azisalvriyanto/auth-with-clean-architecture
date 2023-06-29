@@ -83,6 +83,7 @@ jobs:
           # key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ vars.PROJECT_PATH }}
+            echo ${DOCKERHUB_REPOSITORY}
             git pull origin main
-            docker-compose -f ./deployments/docker-compose.yaml down
-            docker-compose -f ./deployments/docker-compose.yaml up --build -d
+# docker-compose -f ./deployments/docker-compose.yaml down
+# docker-compose -f ./deployments/docker-compose.yaml up --build -d
