@@ -2,7 +2,7 @@ version: '3.8'
 services:
     mysql:
         container_name: ${DOCKERHUB_REPOSITORY}-mysql
-        image: mysql
+        image: mysql:8.0
         build:
             context: ..
             dockerfile: deployments/mysql.Dockerfile
