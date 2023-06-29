@@ -41,7 +41,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v1
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -57,36 +57,44 @@ jobs:
       #     echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_ENV
       #     echo "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV
 
-      # - name: Build and push Docker Image
-      #   env:
-      #     DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY }}
-      #     TAG_VERSION: ${{ vars.TAG_VERSION }}
-      #     PORT: ${{ vars.PORT }}
-      #     MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-      #     MYSQL_USERNAME: ${{ vars.MYSQL_USERNAME }}
-      #     MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-      #     MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
-      #     JWT_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      #   run: |
-      #     docker-compose -f ./deployments/docker-compose.yaml build
-      #     docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
+      - name: Build and push Docker Image
+        # env:
+        #   DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY }}
+        #   TAG_VERSION: ${{ vars.TAG_VERSION }}
+        #   PORT: ${{ vars.PORT }}
+        #   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+        #   MYSQL_USERNAME: ${{ vars.MYSQL_USERNAME }}
+        #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        #   MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+        #   JWT_KEY: ${{ secrets.JWT_SECRET_KEY }}
+        run: |
+          sed -i 's/${DOCKERHUB_REPOSITORY}/${{ vars.DOCKERHUB_REPOSITORY }}/g' deployments/docker-compose.yaml
+          sed -i 's/${TAG_VERSION}/${{ vars.TAG_VERSION }}/g' deployments/docker-compose.yaml
+          sed -i 's/${PORT}/${{ vars.PORT }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_ROOT_PASSWORD}/${{ secrets.MYSQL_ROOT_PASSWORD }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_USERNAME}/${{ vars.MYSQL_USERNAME }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_PASSWORD}/${{ secrets.MYSQL_PASSWORD }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_DATABASE}/${{ vars.MYSQL_DATABASE }}/g' deployments/docker-compose.yaml
+          sed -i 's/${JWT_KEY}/${{ secrets.JWT_SECRET_KEY }}/g' deployments/docker-compose.yaml
+          docker-compose -f ./deployments/docker-compose.yaml build
+          docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
 
-      - name: Build Docker Image  
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./deployments/docker-compose.yaml
-          push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
-          build-args: |
-            "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}"
-            "TAG_VERSION=${{ vars.TAG_VERSION }}"
-            "PORT=${{ vars.PORT }}"
-            "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}"
-            "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}"
-            "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
-            "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}"
-            "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}"
+      # - name: Build Docker Image  
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: ./deployments/docker-compose.yaml
+      #     push: true
+      #     tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+      #     build-args: |
+      #       "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}"
+      #       "TAG_VERSION=${{ vars.TAG_VERSION }}"
+      #       "PORT=${{ vars.PORT }}"
+      #       "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}"
+      #       "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}"
+      #       "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
+      #       "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}"
+      #       "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}"
 
   # deploy:
   #   name: Deploy to VPS
