@@ -1,4 +1,4 @@
-version: '${TAG_VERSION}'
+version: '3.3'
 services:
     mysql:
         container_name: ${DOCKERHUB_REPOSITORY}-mysql
