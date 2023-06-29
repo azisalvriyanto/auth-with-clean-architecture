@@ -82,8 +82,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           # key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ${{ vars.PROJECT_PATH }}
-            echo ${DOCKERHUB_REPOSITORY}
-            git pull origin main
-# docker-compose -f ./deployments/docker-compose.yaml down
-# docker-compose -f ./deployments/docker-compose.yaml up --build -d
+            docker stop ${{ vars.DOCKERHUB_REPOSITORY }} || true
+            docker rm ${{ vars.DOCKERHUB_REPOSITORY }} || true
+            docker pull ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+            docker run -d --name ${{ vars.DOCKERHUB_REPOSITORY }} ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
