@@ -48,20 +48,19 @@ jobs:
 
       - name: Set up environment variables
         run: |
-          echo "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}" >> .env
-          echo "TAG_VERSION=${{ vars.TAG_VERSION }}" >> .env
-          echo "PORT=${{ vars.PORT }}" >> .env
-          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-          echo "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}" >> .env
-          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-          echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> .env
-          echo "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
+          echo "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}" >> $GITHUB_ENV
+          echo "TAG_VERSION=${{ vars.TAG_VERSION }}" >> $GITHUB_ENV
+          echo "PORT=${{ vars.PORT }}" >> $GITHUB_ENV
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_ENV
+          echo "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}" >> $GITHUB_ENV
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
+          echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_ENV
+          echo "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV
 
       - name: Build and push Docker Image
         run: |
-          docker-compose config > ./deployments/docker-compose.yml
           docker-compose -f ./deployments/docker-compose.yaml build
-          docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+          docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
 
       # - name: Build Docker Image
       #   uses: docker/build-push-action@v4
