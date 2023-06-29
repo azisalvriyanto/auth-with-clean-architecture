@@ -53,10 +53,10 @@ You can get postman collection [here](https://api.postman.com/collections/693726
 ## Docker Registry
 Do the command to pull docker registry:
 ```bash
-docker pull azisalvriyanto/auth-and-clean-architecture:2.0
+docker pull azisalvriyanto/auth-with-clean-architecture:2.0.0
 ```
 Alternatively, open the following url in your browser:
-[https://hub.docker.com/r/azisalvriyanto/auth-and-clean-architecture](https://hub.docker.com/r/azisalvriyanto/auth-and-clean-architecture)
+[https://hub.docker.com/r/azisalvriyanto/auth-with-clean-architecture](https://hub.docker.com/r/azisalvriyanto/auth-with-clean-architecture)
 
 ## Tech Spec
 ### Feature Description
