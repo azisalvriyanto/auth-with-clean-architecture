@@ -48,17 +48,16 @@ jobs:
 
       - name: Build and push Docker Image
         run: |
-          cd deployments
-          sed -i 's/${DOCKERHUB_USERNAME}/${{ vars.DOCKERHUB_USERNAME }}/g' docker-compose.yaml
-          sed -i 's/${DOCKERHUB_REPOSITORY}/${{ vars.DOCKERHUB_REPOSITORY }}/g' docker-compose.yaml
-          sed -i 's/${TAG_VERSION}/${{ vars.TAG_VERSION }}/g' docker-compose.yaml
-          sed -i 's/${PORT}/${{ vars.PORT }}/g' docker-compose.yaml
-          sed -i 's/${MYSQL_ROOT_PASSWORD}/${{ secrets.MYSQL_ROOT_PASSWORD }}/g' docker-compose.yaml
-          sed -i 's/${MYSQL_USERNAME}/${{ vars.MYSQL_USERNAME }}/g' docker-compose.yaml
-          sed -i 's/${MYSQL_PASSWORD}/${{ secrets.MYSQL_PASSWORD }}/g' docker-compose.yaml
-          sed -i 's/${MYSQL_DATABASE}/${{ vars.MYSQL_DATABASE }}/g' docker-compose.yaml
-          sed -i 's/${JWT_KEY}/${{ secrets.JWT_SECRET_KEY }}/g' docker-compose.yaml
-          docker-compose build
+          sed -i 's/${DOCKERHUB_USERNAME}/${{ vars.DOCKERHUB_USERNAME }}/g' deployments/docker-compose.yaml
+          sed -i 's/${DOCKERHUB_REPOSITORY}/${{ vars.DOCKERHUB_REPOSITORY }}/g' deployments/docker-compose.yaml
+          sed -i 's/${TAG_VERSION}/${{ vars.TAG_VERSION }}/g' deployments/docker-compose.yaml
+          sed -i 's/${PORT}/${{ vars.PORT }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_ROOT_PASSWORD}/${{ secrets.MYSQL_ROOT_PASSWORD }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_USERNAME}/${{ vars.MYSQL_USERNAME }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_PASSWORD}/${{ secrets.MYSQL_PASSWORD }}/g' deployments/docker-compose.yaml
+          sed -i 's/${MYSQL_DATABASE}/${{ vars.MYSQL_DATABASE }}/g' deployments/docker-compose.yaml
+          sed -i 's/${JWT_KEY}/${{ secrets.JWT_SECRET_KEY }}/g' deployments/docker-compose.yaml
+          docker-compose -f ./deployments/docker-compose.yaml build
           docker-compose push ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
 
       # - name: Build Docker Image  
