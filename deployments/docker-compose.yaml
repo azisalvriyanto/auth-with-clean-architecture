@@ -1,43 +1,43 @@
-version: '2.0.0'
+version: '${TAG_VERSION}'
 services:
-    awca-mysql:
-        container_name: awca-mysql
+    "${DOCKERHUB_REPOSITORY}-mysql":
+        container_name: ${DOCKERHUB_REPOSITORY}-mysql
         image: mysql
         command: --default-authentication-plugin=mysql_native_password
         restart: always
         environment:
-            - MYSQL_ROOT_PASSWORD=password
-            - MYSQL_DATABASE=auth_with_clean_architecture
-            - MYSQL_USER=username
-            - MYSQL_PASSWORD=password
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_USER=${MYSQL_USERNAME}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
         volumes:
-            - awca:/var/lib/mysql
+            - ${DOCKERHUB_REPOSITORY}:/var/lib/mysql
             - ../docs:/docker-entrypoint-initdb.d
         networks:
-            - awca
-    awca-go:
-        container_name: awca-go
-        image: awca:2.0.0
+            - ${DOCKERHUB_REPOSITORY}
+    "${DOCKERHUB_REPOSITORY}-go":
+        container_name: ${DOCKERHUB_REPOSITORY}-go
+        image: ${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
         # restart: always
         build:
             context: ..
             dockerfile: deployments/Dockerfile
         ports:
-            - 1337:8080
+            - ${PORT}:8080
         environment:
-            - DB_HOST=awca-mysql
+            - DB_HOST=${DOCKERHUB_REPOSITORY}-mysql
             - DB_PORT=3306
-            - DB_USERNAME=username
-            - DB_PASSWORD=password
-            - DB_DATABASE=auth_with_clean_architecture
-            - JWT_KEY=awesome-secret-key
+            - DB_USERNAME=${MYSQL_USERNAME}
+            - DB_PASSWORD=${MYSQL_PASSWORD}
+            - DB_DATABASE=${MYSQL_DATABASE}
+            - JWT_KEY=${JWT_KEY}
         networks:
-            - awca
+            - ${DOCKERHUB_REPOSITORY}
         depends_on:
-            - awca-mysql
+            - ${DOCKERHUB_REPOSITORY}-mysql
 volumes:
-    awca:
+    "${DOCKERHUB_REPOSITORY}":
         driver: local
 networks:
-    awca:
+    "${DOCKERHUB_REPOSITORY}":
         driver: bridge

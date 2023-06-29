@@ -66,6 +66,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Set up environment variables
+        run: |
+          echo "DOCKERHUB_REPOSITORY=${{ secrets.DOCKERHUB_REPOSITORY }}" >> $GITHUB_ENV
+          echo "TAG_VERSION=${{ vars.TAG_VERSION }}" >> $GITHUB_ENV
+          echo "PORT=${{ vars.PORT }}" >> $GITHUB_ENV
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_ENV
+          echo "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" >> $GITHUB_ENV
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> $GITHUB_ENV
+          echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> $GITHUB_ENV
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.4
@@ -77,22 +87,5 @@ jobs:
           # key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            docker stop ${{ secrets.DOCKERHUB_REPOSITORY }} || true
-            docker rm ${{ secrets.DOCKERHUB_REPOSITORY }} || true
-            docker pull ${{ secrets.DOCKERHUB_REPOSITORY }}
-            docker run -d -p ${{ vars.PORT }}:8080 --name ${{ secrets.DOCKERHUB_REPOSITORY }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
-
-# cd ${{ secrets.PROJECT_PATH }}
-# git pull origin main
-# export DOCKERHUB_REPOSITORY="${{ secrets.DOCKERHUB_REPOSITORY }}"
-# export TAG_VERSION="${{ vars.TAG_VERSION }}"
-# export PORT="${{ vars.PORT }}"
-# export MYSQL_HOST="${{ secrets.MYSQL_HOST }}"
-# export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-# export MYSQL_USERNAME="${{ secrets.MYSQL_USERNAME }}"
-# export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
-# export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-# export JWT_KEY="${{ secrets.JWT_SECRET_KEY }}"
-# docker-compose -f ./deployments/docker-compose.yaml down
-# docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }} -f ./deployments/Dockerfile .
-# docker-compose -f ./deployments/docker-compose.yaml up --build -d
+            docker-compose -f ./deployments/docker-compose.yaml down
+            docker-compose -f ./deployments/docker-compose.yaml up --build -d
