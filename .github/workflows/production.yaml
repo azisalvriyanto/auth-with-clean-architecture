@@ -58,7 +58,8 @@ jobs:
           sed -i 's/${MYSQL_DATABASE}/${{ vars.MYSQL_DATABASE }}/g' deployments/docker-compose.yaml
           sed -i 's/${JWT_KEY}/${{ secrets.JWT_SECRET_KEY }}/g' deployments/docker-compose.yaml
           docker-compose -f ./deployments/docker-compose.yaml build
-          docker push ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
+          docker-compose -f ./deployments/docker-compose.yaml push
+    # docker push ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
 
       # - name: Build Docker Image  
       #   uses: docker/build-push-action@v4
