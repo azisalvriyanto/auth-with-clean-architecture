@@ -77,7 +77,6 @@ jobs:
           # key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ secrets.PROJECT_PATH }}
-            pwd
             docker stop ${{ secrets.DOCKERHUB_REPOSITORY }} || true
             docker rm ${{ secrets.DOCKERHUB_REPOSITORY }} || true
             docker pull ${{ secrets.DOCKERHUB_REPOSITORY }}
