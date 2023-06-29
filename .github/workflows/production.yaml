@@ -57,36 +57,36 @@ jobs:
       #     echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_ENV
       #     echo "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV
 
-      - name: Build and push Docker Image
-        env:
-          DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}
-          TAG_VERSION=${{ vars.TAG_VERSION }}
-          PORT=${{ vars.PORT }}
-          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-          MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}
-          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}
-          JWT_KEY=${{ secrets.JWT_SECRET_KEY }}
-        run: |
-          docker-compose -f ./deployments/docker-compose.yaml build
-          docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
+      # - name: Build and push Docker Image
+      #   env:
+      #     DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}
+      #     TAG_VERSION=${{ vars.TAG_VERSION }}
+      #     PORT=${{ vars.PORT }}
+      #     MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+      #     MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}
+      #     MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+      #     MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}
+      #     JWT_KEY=${{ secrets.JWT_SECRET_KEY }}
+      #   run: |
+      #     docker-compose -f ./deployments/docker-compose.yaml build
+      #     docker-compose push ${{ vars.DOCKERHUB_USERNAME }}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
 
-      # - name: Build Docker Image
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: ./deployments/docker-compose.yaml
-      #     push: true
-      #     tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
-      #     secrets: |
-      #       DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}
-      #       TAG_VERSION=${{ vars.TAG_VERSION }}
-      #       PORT=${{ vars.PORT }}
-      #       MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-      #       MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}
-      #       MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-      #       MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}
-      #       JWT_KEY=${{ secrets.JWT_SECRET_KEY }}
+      - name: Build Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./deployments/docker-compose.yaml
+          push: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+          secrets: |
+            "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}"
+            "TAG_VERSION=${{ vars.TAG_VERSION }}"
+            "PORT=${{ vars.PORT }}"
+            "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}"
+            "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}"
+            "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
+            "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}"
+            "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}"
 
   # deploy:
   #   name: Deploy to VPS
