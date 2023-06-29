@@ -34,6 +34,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -78,7 +84,5 @@ jobs:
           script: |
             cd ${{ vars.PROJECT_PATH }}
             git pull origin main
-            docker stop ${{ vars.DOCKERHUB_REPOSITORY }} || true
-            docker rm ${{ vars.DOCKERHUB_REPOSITORY }} || true
-            docker pull ${{ vars.DOCKERHUB_REPOSITORY }}
-            docker run -d --name ${{ vars.DOCKERHUB_REPOSITORY }} ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+            docker-compose -f ./deployments/docker-compose.yaml down
+            docker-compose -f ./deployments/docker-compose.yaml up --build -d
