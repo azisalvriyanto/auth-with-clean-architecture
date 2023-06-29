@@ -74,7 +74,17 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           # key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker stop ${{ vars.DOCKERHUB_REPOSITORY }} || true
-            docker rm ${{ vars.DOCKERHUB_REPOSITORY }} || true
+            docker stop ${{ vars.DOCKERHUB_REPOSITORY }}-go || true
+            docker rm ${{ vars.DOCKERHUB_REPOSITORY }}-go || true
             docker pull ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
-            docker run -d --name ${{ vars.DOCKERHUB_REPOSITORY }} ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
+            docker run -d \
+              --name ${{ vars.DOCKERHUB_REPOSITORY }}-go \
+              -e DB_HOST=${{ vars.DOCKERHUB_REPOSITORY }}-mysql \
+              -e DB_PORT=3306 \
+              -e DB_USERNAME=${{ vars.MYSQL_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.MYSQL_PASSWORD }} \
+              -e DB_DATABASE=${{ vars.MYSQL_DATABASE }} \
+              -e JWT_KEY=${{ secrets.JWT_SECRET_KEY }} \
+              -p ${{ vars.PORT }}:8080 \
+              --network=${{ vars.DOCKERHUB_REPOSITORY }} \
+              ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:${{ vars.TAG_VERSION }}
