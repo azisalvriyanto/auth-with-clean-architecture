@@ -46,28 +46,9 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Set up environment variables
-      #   run: |
-      #     echo "DOCKERHUB_REPOSITORY=${{ vars.DOCKERHUB_REPOSITORY }}" >> $GITHUB_ENV
-      #     echo "TAG_VERSION=${{ vars.TAG_VERSION }}" >> $GITHUB_ENV
-      #     echo "PORT=${{ vars.PORT }}" >> $GITHUB_ENV
-      #     echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> $GITHUB_ENV
-      #     echo "MYSQL_USERNAME=${{ vars.MYSQL_USERNAME }}" >> $GITHUB_ENV
-      #     echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> $GITHUB_ENV
-      #     echo "MYSQL_DATABASE=${{ vars.MYSQL_DATABASE }}" >> $GITHUB_ENV
-      #     echo "JWT_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV
-
       - name: Build and push Docker Image
-        # env:
-        #   DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY }}
-        #   TAG_VERSION: ${{ vars.TAG_VERSION }}
-        #   PORT: ${{ vars.PORT }}
-        #   MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        #   MYSQL_USERNAME: ${{ vars.MYSQL_USERNAME }}
-        #   MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-        #   MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
-        #   JWT_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
+          sed -i 's/${DOCKERHUB_USERNAME}/${{ vars.DOCKERHUB_USERNAME }}/g' deployments/docker-compose.yaml
           sed -i 's/${DOCKERHUB_REPOSITORY}/${{ vars.DOCKERHUB_REPOSITORY }}/g' deployments/docker-compose.yaml
           sed -i 's/${TAG_VERSION}/${{ vars.TAG_VERSION }}/g' deployments/docker-compose.yaml
           sed -i 's/${PORT}/${{ vars.PORT }}/g' deployments/docker-compose.yaml
