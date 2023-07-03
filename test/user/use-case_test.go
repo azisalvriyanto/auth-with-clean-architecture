@@ -1,8 +1,8 @@
-package customer
+package user
 
 import (
-	"auth-with-clean-architecture/internal/customer"
-	"auth-with-clean-architecture/internal/customer/mocks"
+	"auth-with-clean-architecture/internal/user"
+	"auth-with-clean-architecture/internal/user/mocks"
 	"errors"
 	"reflect"
 	"testing"
@@ -10,22 +10,21 @@ import (
 
 var (
 	errorCase = errors.New("some error")
-	existData = customer.Customer{
-		FirstName: "John",
-		LastName:  "Doe",
-		Email:     "johndoe@example.com",
-		Avatar:    "",
+	existData = user.User{
+		FullName: "John Doe",
+		Username: "johndoe",
+		Password: "password",
+		RoleID:   1,
 	}
-	nilData = customer.Customer{}
+	nilData = user.User{}
 )
 
 func TestUseCaseShowAll(t *testing.T) {
 	type fields struct {
-		R customer.RepositoryInterface
+		R user.RepositoryInterface
 	}
 
-	successCase := []customer.Customer{}
-
+	successCase := []user.User{}
 	for i := 0; i < 5; i++ {
 		successCase = append(successCase, existData)
 	}
@@ -37,7 +36,7 @@ func TestUseCaseShowAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		fields  fields
-		want    []customer.Customer
+		want    []user.User
 		wantErr bool
 	}{
 		{
@@ -59,7 +58,7 @@ func TestUseCaseShowAll(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &customer.UseCase{
+			u := &user.UseCase{
 				R: tt.fields.R,
 			}
 			got, err := u.ShowAll()
@@ -76,10 +75,10 @@ func TestUseCaseShowAll(t *testing.T) {
 
 func TestUseCaseCreate(t *testing.T) {
 	type fields struct {
-		R customer.RepositoryInterface
+		R user.RepositoryInterface
 	}
 	type args struct {
-		customer *customer.Customer
+		user *user.User
 	}
 
 	mockRepository := mocks.NewRepositoryInterface(t)
@@ -98,7 +97,7 @@ func TestUseCaseCreate(t *testing.T) {
 				R: mockRepository,
 			},
 			args: args{
-				customer: &existData,
+				user: &existData,
 			},
 			wantErr: false,
 		},
@@ -108,17 +107,17 @@ func TestUseCaseCreate(t *testing.T) {
 				R: mockRepository,
 			},
 			args: args{
-				customer: &nilData,
+				user: &nilData,
 			},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &customer.UseCase{
+			u := &user.UseCase{
 				R: tt.fields.R,
 			}
-			if err := u.Create(tt.args.customer); (err != nil) != tt.wantErr {
+			if err := u.Create(tt.args.user); (err != nil) != tt.wantErr {
 				t.Errorf("UseCase.Create() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -127,7 +126,7 @@ func TestUseCaseCreate(t *testing.T) {
 
 func TestUseCaseShow(t *testing.T) {
 	type fields struct {
-		R customer.RepositoryInterface
+		R user.RepositoryInterface
 	}
 	type args struct {
 		ID string
@@ -141,7 +140,7 @@ func TestUseCaseShow(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *customer.Customer
+		want    *user.User
 		wantErr bool
 	}{
 		{
@@ -169,7 +168,7 @@ func TestUseCaseShow(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &customer.UseCase{
+			u := &user.UseCase{
 				R: tt.fields.R,
 			}
 			got, err := u.Show(tt.args.ID)
@@ -186,11 +185,11 @@ func TestUseCaseShow(t *testing.T) {
 
 func TestUseCaseUpdate(t *testing.T) {
 	type fields struct {
-		R customer.RepositoryInterface
+		R user.RepositoryInterface
 	}
 	type args struct {
 		ID       string
-		customer customer.Customer
+		customer user.User
 	}
 
 	mockRepository := mocks.NewRepositoryInterface(t)
@@ -201,7 +200,7 @@ func TestUseCaseUpdate(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *customer.Customer
+		want    *user.User
 		wantErr bool
 	}{
 		{
@@ -231,7 +230,7 @@ func TestUseCaseUpdate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &customer.UseCase{
+			u := &user.UseCase{
 				R: tt.fields.R,
 			}
 			got, err := u.Update(tt.args.ID, tt.args.customer)
@@ -248,7 +247,7 @@ func TestUseCaseUpdate(t *testing.T) {
 
 func TestUseCaseDestroy(t *testing.T) {
 	type fields struct {
-		R customer.RepositoryInterface
+		R user.RepositoryInterface
 	}
 	type args struct {
 		ID string
@@ -262,7 +261,7 @@ func TestUseCaseDestroy(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    *customer.Customer
+		want    *user.User
 		wantErr bool
 	}{
 		{
@@ -290,7 +289,7 @@ func TestUseCaseDestroy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			u := &customer.UseCase{
+			u := &user.UseCase{
 				R: tt.fields.R,
 			}
 			got, err := u.Destroy(tt.args.ID)

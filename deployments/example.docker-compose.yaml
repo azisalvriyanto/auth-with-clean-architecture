@@ -1,8 +1,8 @@
 version: '3.8'
 services:
     mysql:
-        container_name: ${DOCKERHUB_REPOSITORY}-mysql
-        image: mysql:8.0
+        container_name: auth-with-clean-architecture-mysql
+        image: mysql
         command: |
             --default-authentication-plugin=mysql_native_password
             --character-set-server=utf8mb4
@@ -11,12 +11,12 @@ services:
             --lower_case_table_names=2
         restart: always
         environment:
-            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-            - MYSQL_USER=${MYSQL_USERNAME}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=username
+            - MYSQL_PASSWORD=pasword
+            - MYSQL_DATABASE=auth_with_clean_architecture
         healthcheck:
-            test: "mysql ${MYSQL_DATABASE} -u${MYSQL_USERNAME} -p${MYSQL_PASSWORD} -e 'SELECT 1;'"
+            test: "mysql auth_with_clean_architecture -uawesomeusername -pawesomepassword -e 'SELECT 1;'"
             interval: 5s
             timeout: 5s
             start_period: 30s
@@ -27,30 +27,30 @@ services:
         networks:
             - network
     go:
-        container_name: ${DOCKERHUB_REPOSITORY}-go
-        image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY}:${TAG_VERSION}
-        # restart: always
+        container_name: auth-with-clean-architecture-go
+        image: azisalvriyanto/auth-with-clean-architecture:2.0.0
+        restart: always
         build:
             context: ..
             dockerfile: deployments/Dockerfile
         ports:
-            - ${PORT}:8080
+            - 1337:8080
         environment:
-            - DB_HOST=${DOCKERHUB_REPOSITORY}-mysql
+            - DB_USERNAME=username
+            - DB_PASSWORD=password
+            - DB_HOST=auth-with-clean-architecture-mysql
             - DB_PORT=3306
-            - DB_USERNAME=${MYSQL_USERNAME}
-            - DB_PASSWORD=${MYSQL_PASSWORD}
-            - DB_DATABASE=${MYSQL_DATABASE}
-            - JWT_KEY=${JWT_KEY}
+            - DB_DATABASE=auth_with_clean_architecture
+            - JWT_KEY=secret-key
         networks:
             - network
         depends_on:
             - mysql
 volumes:
     volume:
-        name: ${DOCKERHUB_REPOSITORY}
+        name: auth-with-clean-architecture
         driver: local
 networks:
     network:
-        name: ${DOCKERHUB_REPOSITORY}
+        name: auth-with-clean-architecture
         driver: bridge

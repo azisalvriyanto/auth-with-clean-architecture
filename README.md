@@ -48,13 +48,15 @@ go run cmd/main.go
 ```
 
 ## Postman Collection
-You can get postman collection [here](https://api.postman.com/collections/6937269-6ca38275-4202-4fb7-ae6f-7ca2dcea5cd7?access_key=PMAT-01H29HTHD0475RNAZDQXSP6ZDK).
+You can get postman collection [here](https://api.postman.com/collections/6937269-355ef6d6-7391-481a-9de0-e28c31526684?access_key=PMAT-01H2QEEX44X1W7GRYSJWMRYHD6).
 
 ## Docker Registry
 Do the command to pull docker registry:
 ```bash
-docker pull azisalvriyanto/auth-and-clean-architecture:2.0
+docker pull azisalvriyanto/auth-with-clean-architecture:2.0.0
 ```
+Alternatively, open the following url in your browser:
+[https://hub.docker.com/r/azisalvriyanto/auth-with-clean-architecture](https://hub.docker.com/r/azisalvriyanto/auth-with-clean-architecture)
 
 ## Tech Spec
 ### Feature Description

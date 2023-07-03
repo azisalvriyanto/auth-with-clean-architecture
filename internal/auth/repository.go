@@ -2,6 +2,8 @@ package auth
 
 import (
 	"auth-with-clean-architecture/internal/user"
+	"auth-with-clean-architecture/pkg/password"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,7 +16,7 @@ type Repository struct {
 }
 type RepositoryInterface interface {
 	FindByUsername(username string) (*user.User, error)
-	Login(user *user.User) (*ProfileItemWithToken, error)
+	Login(user *Payload) (*ProfileItemWithToken, error)
 	ShowProfile(tokenSigned string) (*user.User, error)
 }
 
@@ -31,7 +33,17 @@ func (r *Repository) FindByUsername(username string) (*user.User, error) {
 	return user, res
 }
 
-func (r *Repository) Login(user *user.User) (*ProfileItemWithToken, error) {
+func (r *Repository) Login(payload *Payload) (*ProfileItemWithToken, error) {
+	user, _ := r.FindByUsername(payload.Username)
+	if user.Username == "" {
+		return nil, errors.New("user not found")
+	}
+
+	match := password.CheckPasswordHash(payload.Password, user.Password)
+	if !match {
+		return nil, errors.New("password is incorrect")
+	}
+
 	expTime := time.Now().Add(time.Minute * 3600)
 	claims := &JWTClaim{
 		Username: user.Username,
