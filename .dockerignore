@@ -1,5 +1,5 @@
 .idea
+.vscode
 .env
 vendor
-note.txt
-*.backup*
+*temp.*

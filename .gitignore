@@ -1,5 +1,4 @@
-.idea
+.scannerwork
 .env
 vendor
-note.txt
-*.backup*
+*temp.*
