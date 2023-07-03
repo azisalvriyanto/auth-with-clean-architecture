@@ -1,5 +1,4 @@
-.idea
+.scannerwork
 .env
 vendor
-*backup*
 *temp.*
