@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"auth-with-clean-architecture/dto"
-	"auth-with-clean-architecture/internal/auth"
+	"auth-with-clean-architecture/modules/auth"
 	"errors"
 	"fmt"
 	"net/http"
@@ -24,7 +24,7 @@ func AuthMiddleware(c *gin.Context) {
 		err := errors.New("authorization header is not provided")
 		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    401,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -37,7 +37,7 @@ func AuthMiddleware(c *gin.Context) {
 		err := errors.New("invalid authorization header format")
 		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    401,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -50,7 +50,7 @@ func AuthMiddleware(c *gin.Context) {
 		err := fmt.Errorf("unsupported authorization type %s", authorizationType)
 		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    401,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -63,7 +63,7 @@ func AuthMiddleware(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    401,
 				Message: err.Error(),
 			},
 			Data: nil,

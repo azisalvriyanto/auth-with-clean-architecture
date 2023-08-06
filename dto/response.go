@@ -6,6 +6,7 @@ type Response struct {
 }
 
 type MetaResponse struct {
-	Success bool   `json:"success"`
+	Code    int    `json:"success"`
 	Message string `json:"message"`
+	Errors  []any  `json:"errors"`
 }

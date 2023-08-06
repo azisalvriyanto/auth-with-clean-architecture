@@ -2,9 +2,9 @@ package main
 
 import (
 	"auth-with-clean-architecture/dto"
-	"auth-with-clean-architecture/internal/auth"
-	"auth-with-clean-architecture/internal/customer"
-	"auth-with-clean-architecture/internal/user"
+	"auth-with-clean-architecture/modules/auth"
+	"auth-with-clean-architecture/modules/customer"
+	"auth-with-clean-architecture/modules/user"
 	"auth-with-clean-architecture/pkg/middleware"
 	"log"
 	"net/http"
@@ -46,7 +46,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: true,
+				Code:    200,
 				Message: "Made with love by Alvriyanto Azis",
 			},
 			Data: nil,
@@ -77,19 +77,20 @@ func main() {
 
 	authR := r.Group("/").Use(middleware.AuthMiddleware)
 	authR.GET("/auth/profile", authHandler.ShowProfile)
+
 	// users
-	authR.GET("/users", userHandler.ShowAll)
+	authR.GET("/users", userHandler.List)
 	authR.POST("/users", userHandler.Create)
-	authR.GET("/users/:ID", userHandler.Show)
+	authR.GET("/users/:ID", userHandler.Read)
 	authR.PUT("/users/:ID", userHandler.Update)
-	authR.DELETE("/users/:ID", userHandler.Destroy)
+	authR.DELETE("/users/:ID", userHandler.Delete)
 
 	// customers
-	authR.GET("/customers", customerHandler.ShowAll)
+	authR.GET("/customers", customerHandler.List)
 	authR.POST("/customers", customerHandler.Create)
-	authR.GET("/customers/:ID", customerHandler.Show)
+	authR.GET("/customers/:ID", customerHandler.Read)
 	authR.PUT("/customers/:ID", customerHandler.Update)
-	authR.DELETE("/customers/:ID", customerHandler.Destroy)
+	authR.DELETE("/customers/:ID", customerHandler.Delete)
 
 	err = r.Run(":8080")
 	if err != nil {

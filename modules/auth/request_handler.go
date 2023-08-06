@@ -9,7 +9,7 @@ import (
 )
 
 type RequestHandler struct {
-	C ControllerInterface
+	c ControllerInterface
 }
 
 type RequestHandlerInterface interface {
@@ -19,7 +19,7 @@ type RequestHandlerInterface interface {
 
 func NewRequestHandler(c ControllerInterface) RequestHandlerInterface {
 	return &RequestHandler{
-		C: c,
+		c: c,
 	}
 }
 
@@ -34,7 +34,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -42,11 +42,11 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		return
 	}
 
-	res, err := rh.C.Login(&req)
+	data, err := rh.c.Login(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -56,10 +56,10 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code:    200,
+			Message: "login successfully",
 		},
-		Data: res.Data,
+		Data: data,
 	})
 }
 
@@ -68,7 +68,7 @@ func (rh *RequestHandler) ShowProfile(c *gin.Context) {
 	if authorization == nil {
 		c.JSON(http.StatusUnauthorized, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    401,
 				Message: "Unauthorized",
 			},
 			Data: nil,
@@ -77,11 +77,11 @@ func (rh *RequestHandler) ShowProfile(c *gin.Context) {
 	}
 
 	tokenSigned := strings.Split(authorization[0], " ")[1]
-	res, err := rh.C.ShowProfile(tokenSigned)
+	res, err := rh.c.ShowProfile(tokenSigned)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -91,7 +91,7 @@ func (rh *RequestHandler) ShowProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
+			Code:    200,
 			Message: "",
 		},
 		Data: res,

@@ -8,20 +8,20 @@ import (
 )
 
 type RequestHandler struct {
-	C ControllerInterface
+	c ControllerInterface
 }
 
 type RequestHandlerInterface interface {
-	ShowAll(c *gin.Context)
+	List(c *gin.Context)
 	Create(c *gin.Context)
-	Show(c *gin.Context)
+	Read(c *gin.Context)
 	Update(c *gin.Context)
-	Destroy(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
 func NewRequestHandler(c ControllerInterface) RequestHandlerInterface {
 	return &RequestHandler{
-		C: c,
+		c: c,
 	}
 }
 
@@ -29,15 +29,14 @@ type CreateRequest struct {
 	FirstName string `json:"first_name" binding:"required"`
 	LastName  string `json:"last_name" binding:"required"`
 	Email     string `json:"email" binding:"required"`
-	Avatar    string `json:"avatar" binding:"required"`
 }
 
-func (rh RequestHandler) ShowAll(c *gin.Context) {
-	res, err := rh.C.ShowAll()
+func (rh *RequestHandler) List(c *gin.Context) {
+	res, err := rh.c.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -47,20 +46,19 @@ func (rh RequestHandler) ShowAll(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: "",
+			Code: 500,
 		},
 		Data: res,
 	})
 }
 
-func (rh RequestHandler) Create(c *gin.Context) {
+func (rh *RequestHandler) Create(c *gin.Context) {
 	var req CreateRequest
 
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -68,11 +66,11 @@ func (rh RequestHandler) Create(c *gin.Context) {
 		return
 	}
 
-	res, err := rh.C.Create(&req)
+	res, err := rh.c.Create(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -82,55 +80,20 @@ func (rh RequestHandler) Create(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
-		},
-		Data: res.Data,
-	})
-}
-
-func (rh RequestHandler) Show(c *gin.Context) {
-	ID := c.Param("ID")
-	res, err := rh.C.Show(ID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Meta: dto.MetaResponse{
-				Success: false,
-				Message: err.Error(),
-			},
-			Data: nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, dto.Response{
-		Meta: dto.MetaResponse{
-			Success: true,
-			Message: "",
+			Code:    200,
+			Message: "customer successfully created",
 		},
 		Data: res,
 	})
 }
 
-func (rh RequestHandler) Update(c *gin.Context) {
-	customer := Customer{}
+func (rh *RequestHandler) Read(c *gin.Context) {
 	ID := c.Param("ID")
-	if err := c.ShouldBindJSON(&customer); err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Meta: dto.MetaResponse{
-				Success: false,
-				Message: err.Error(),
-			},
-			Data: nil,
-		})
-		return
-	}
-
-	res, err := rh.C.Update(ID, customer)
+	res, err := rh.c.Read(ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -140,20 +103,31 @@ func (rh RequestHandler) Update(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code: 200,
 		},
-		Data: res.Data,
+		Data: res,
 	})
 }
 
-func (rh RequestHandler) Destroy(c *gin.Context) {
+func (rh *RequestHandler) Update(c *gin.Context) {
+	req := CreateRequest{}
 	ID := c.Param("ID")
-	res, err := rh.C.Destroy(ID)
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Meta: dto.MetaResponse{
+				Code:    500,
+				Message: err.Error(),
+			},
+			Data: nil,
+		})
+		return
+	}
+
+	res, err := rh.c.Update(ID, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -163,9 +137,31 @@ func (rh RequestHandler) Destroy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code:    200,
+			Message: "customer successfully updated",
 		},
-		Data: res.Data,
+		Data: res,
+	})
+}
+
+func (rh *RequestHandler) Delete(c *gin.Context) {
+	ID := c.Param("ID")
+	err := rh.c.Delete(ID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Meta: dto.MetaResponse{
+				Code:    500,
+				Message: err.Error(),
+			},
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.Response{
+		Meta: dto.MetaResponse{
+			Code:    200,
+			Message: "customer successfully deleted",
+		},
 	})
 }

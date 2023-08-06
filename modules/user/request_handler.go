@@ -8,20 +8,20 @@ import (
 )
 
 type RequestHandler struct {
-	C ControllerInterface
+	c ControllerInterface
 }
 
 type RequestHandlerInterface interface {
-	ShowAll(c *gin.Context)
+	List(c *gin.Context)
 	Create(c *gin.Context)
-	Show(c *gin.Context)
+	Read(c *gin.Context)
 	Update(c *gin.Context)
-	Destroy(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
 func NewRequestHandler(c ControllerInterface) RequestHandlerInterface {
 	return &RequestHandler{
-		C: c,
+		c: c,
 	}
 }
 
@@ -31,12 +31,16 @@ type CreateRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-func (rh *RequestHandler) ShowAll(c *gin.Context) {
-	res, err := rh.C.ShowAll()
+type UpdateRequest struct {
+	FullName string `json:"full_name" binding:"required"`
+}
+
+func (rh *RequestHandler) List(c *gin.Context) {
+	res, err := rh.c.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -46,8 +50,7 @@ func (rh *RequestHandler) ShowAll(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: "",
+			Code: 200,
 		},
 		Data: res,
 	})
@@ -58,7 +61,7 @@ func (rh *RequestHandler) Create(c *gin.Context) {
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -66,11 +69,11 @@ func (rh *RequestHandler) Create(c *gin.Context) {
 		return
 	}
 
-	res, err := rh.C.Create(&req)
+	data, err := rh.c.Create(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -80,20 +83,20 @@ func (rh *RequestHandler) Create(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code:    200,
+			Message: "user successfully created",
 		},
-		Data: res.Data,
+		Data: data,
 	})
 }
 
-func (rh *RequestHandler) Show(c *gin.Context) {
+func (rh *RequestHandler) Read(c *gin.Context) {
 	ID := c.Param("ID")
-	res, err := rh.C.Show(ID)
+	res, err := rh.c.Read(ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -103,20 +106,19 @@ func (rh *RequestHandler) Show(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: "",
+			Code: 200,
 		},
 		Data: res,
 	})
 }
 
 func (rh *RequestHandler) Update(c *gin.Context) {
-	user := User{}
+	user := UpdateRequest{}
 	ID := c.Param("ID")
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -124,11 +126,11 @@ func (rh *RequestHandler) Update(c *gin.Context) {
 		return
 	}
 
-	res, err := rh.C.Update(ID, user)
+	data, err := rh.c.Update(ID, &user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -138,20 +140,20 @@ func (rh *RequestHandler) Update(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code:    200,
+			Message: "user successfully updated",
 		},
-		Data: res.Data,
+		Data: data,
 	})
 }
 
-func (rh *RequestHandler) Destroy(c *gin.Context) {
+func (rh *RequestHandler) Delete(c *gin.Context) {
 	ID := c.Param("ID")
-	res, err := rh.C.Destroy(ID)
+	err := rh.c.Delete(ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.Response{
 			Meta: dto.MetaResponse{
-				Success: false,
+				Code:    500,
 				Message: err.Error(),
 			},
 			Data: nil,
@@ -161,9 +163,8 @@ func (rh *RequestHandler) Destroy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, dto.Response{
 		Meta: dto.MetaResponse{
-			Success: true,
-			Message: res.Message,
+			Code:    200,
+			Message: "user successfully deleted",
 		},
-		Data: res.Data,
 	})
 }
