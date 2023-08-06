@@ -28,7 +28,7 @@ services:
             - network
     go:
         container_name: auth-with-clean-architecture-go
-        image: azisalvriyanto/auth-with-clean-architecture:2.0.0
+        image: azisalvriyanto/auth-with-clean-architecture:3.0.0
         restart: always
         build:
             context: ..
